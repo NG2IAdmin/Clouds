@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <jpeglib.h>
 #include <math.h>
+#include <sys/time.h>
 
 int H,W;
 unsigned char * jpegparts(char name[]){
@@ -20,7 +21,8 @@ unsigned char * jpegparts(char name[]){
 		fprintf(stderr, "can't open %s\n", name);
 		return 0;
 	}
-	printf("1\n");
+	//printf("1\n");
+	fflush(stdout);
 	cinfo.err = jpeg_std_error(&jerr);
 	jpeg_create_decompress(&cinfo);
 	jpeg_stdio_src(&cinfo, infile);
@@ -36,10 +38,10 @@ unsigned char * jpegparts(char name[]){
 			
 	unsigned char * pic;
 	pic = malloc(width*height*outcomponents*sizeof(*pic));
-	printf("3\n");
+	//printf("3\n");
 	pJpegBuffer = (*cinfo.mem->alloc_sarray) ((j_common_ptr) &cinfo, 
 	                                           JPOOL_IMAGE, row_stride, 1);//don't know waht is this
-	printf("4\n");
+	//printf("4\n");
 	
 	while (cinfo.output_scanline < cinfo.output_height) {
 		
@@ -55,10 +57,16 @@ unsigned char * jpegparts(char name[]){
 				*(pic++) = *(pic-1);
 			}
 		}
-	}printf("5\n");
+	}//printf("5\n");
 	pic-=width*height*3*sizeof(*pic);
 	
 	return pic;
+}
+
+double cpuSecond(){
+	struct timeval tp;
+	gettimeofday(&tp,NULL);
+	return((double)tp.tv_sec + (double)tp.tv_usec*1.e-6);
 }
 
 void usage(char name[]){
@@ -66,6 +74,7 @@ void usage(char name[]){
     exit(1);      
 }
 int main (int argc, char *argv[]){//infile outfile partsnr 
+	double tStart = cpuSecond();
 	if(argc!=4)usage(argv[0]);
 	char *name=argv[1];
 	char *outname=argv[2];
@@ -73,10 +82,10 @@ int main (int argc, char *argv[]){//infile outfile partsnr
 	unsigned char **pic=(unsigned char**)malloc(numparts*sizeof(**pic));  //need to check this
 	
 	for(int i=1;i<=numparts;i++){	
-		printf("loop %d\n",i);
+		//printf("loop %d\n",i);
 		char tempname[2048];
 		sprintf(tempname,"%s_part%d",name,i);
-		printf("%s\n",tempname);
+		//printf("%s\n",tempname);
 		//tempname="image1.jpg";
 		pic[i-1]=jpegparts(tempname);
 	}
@@ -110,21 +119,19 @@ int main (int argc, char *argv[]){//infile outfile partsnr
 	int quality = 70; 
 	jpeg_set_quality(&cinfo, quality, TRUE);
 	jpeg_start_compress(&cinfo, TRUE);
-printf("6\n");
+	//printf("6\n");
 	JSAMPROW row_pointer[1];
 	while(cinfo.next_scanline < cinfo.image_height){
 		
-		printf("%d %d\n",cinfo.next_scanline,cinfo.image_height);
+		//printf("%d %d\n",cinfo.next_scanline,cinfo.image_height);
 		row_pointer[0] = &outpic[cinfo.next_scanline*W*3];
 		(void) jpeg_write_scanlines(&cinfo, row_pointer, 1);
 	}
 
-	printf("7\n");
+	//printf("7\n");
 	jpeg_finish_compress(&cinfo);
 	fclose(outfile);
 	jpeg_destroy_compress(&cinfo);
-
-
-free(pic);
-free(outpic);
+	double tFinish = cpuSecond();
+	printf("Time elapsed: %lf seconds.\n",tFinish-tStart);
 }
