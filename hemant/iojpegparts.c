@@ -106,6 +106,7 @@ int main (int argc, char *argv[]){
 	int startRowNr, endRowNr;
 	startRowNr = ( blockNr == 1 ) ? mask_width/2 : blockSize*(blockNr-1);
 	endRowNr = ( blockNr == nrBlocks) ? height - mask_width/2 : blockSize*blockNr;
+	printf("%d %d %d\n",blockNr,startRowNr,endRowNr);
 	
 	for (int row = startRowNr; row < endRowNr; row ++){
 		for (int col= mask_width/2; col < width - mask_width/2; col++){
@@ -120,6 +121,7 @@ int main (int argc, char *argv[]){
 				sumout[1]+=(double)(*(pic+pos+1)) * mask[i];
 				sumout[2]+=(double)(*(pic+pos+2)) * mask[i];
 			}
+			pos = (row*width + col)*3;
 			*(outpic+pos) = (unsigned char) sumout[0];
 			*(outpic+pos+1) = (unsigned char) sumout[1];
 			*(outpic+pos+2) = (unsigned char) sumout[2];
