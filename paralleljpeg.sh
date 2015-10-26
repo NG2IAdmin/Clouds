@@ -8,8 +8,20 @@ if [ "$#" -ne 5 ]; then
 fi
 
 # To get list of machines
-nmap -v 192.168.1.1-15 | grep "port 22/" | awk '{print $6}' | awk -F"." '{print $NF}'
-ifconfig | grep "inet addr" | grep Bcast | awk '{print $2}' | awk -F"." '{print $NF}'
+MACHINES=$( nmap -v 192.168.1.1-15 | grep "port 22/" | awk '{print $6}' | awk -F"." '{print $NF}')
+OWNIP=$( ifconfig | grep "inet addr" | grep Bcast | awk '{print $2}' | awk -F"." '{print $NF}')
+
+for MACHINE in $MACHINES
+do
+	if [ $MACHINE -eq $OWNIP ]; then continue; fi
+	if [ $MACHINE -eq $1 ]; then continue; fi
+	if [ $MACHINE -eq 1 ]; then continue; fi
+	NCPU=$( ssh ng2i@192.168.1.$MACHINE cat /proc/cpuinfo | grep processor | wc -l)
+	echo $MACHINE $NCPU
+done
+
+exit 1
+
 ssh ng2i@192.168.1.10 cat /proc/cpuinfo | grep processor | wc -l
 
 
