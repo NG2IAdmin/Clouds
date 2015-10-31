@@ -43,4 +43,4 @@ for IP in $IPs; do
 done
 wait
 bin/combinefun $3 $3 $TotalCPUs
-rm $3_part*
+# rm $3_part*

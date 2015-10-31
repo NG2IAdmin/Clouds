@@ -32,13 +32,7 @@ int main (int argc, char *argv[]){
 		printf("Mask width must be odd.\n");
 		exit(1);
 	}
-	
-	//char command[2048], command2[2048];
-	//sprintf(command,"ssh pi@192.168.1.2 raspistill -o %s",name);
-	//system(command);
-	//sprintf(command2,"scp pi@192.168.1.2:~/%s .",name);
-	//system(command2);
-	
+
 	double tStart = cpuSecond();
 	
 	FILE *infile = fopen(name,"rb");
@@ -66,7 +60,6 @@ int main (int argc, char *argv[]){
 	pic = malloc(width*height*3*sizeof(pic));
 	outpic = malloc(width*height*3*sizeof(outpic));
 	pJpegBuffer = (*cinfo.mem->alloc_sarray) ((j_common_ptr) &cinfo, JPOOL_IMAGE, row_stride, 1);
-	//printf("%d %d\n",width,height);
 	while (cinfo.output_scanline < cinfo.output_height) {
 		(void) jpeg_read_scanlines(&cinfo, pJpegBuffer, 1);
 		for (int x=0;x<width;x++) {
@@ -96,9 +89,10 @@ int main (int argc, char *argv[]){
 		mask[i] = a * exp(-(x-xcen)*(x-xcen)/(2*peak_width*peak_width)
 					      -(y-ycen)*(y-ycen)/(2*peak_width*peak_width));
 		sum+=mask[i];
-		//printf("%lf ",mask[i]);
 	}
-	//printf("\n%lf, %lf\n",sum, a);
+	for (int i=0;i<mask_width*mask_width;i++){
+		mask[i] /= sum;
+	}
 	
 	int pos;
 	double sumout[3];
@@ -106,7 +100,6 @@ int main (int argc, char *argv[]){
 	int startRowNr, endRowNr;
 	startRowNr = ( blockNr == 1 ) ? mask_width/2 : blockSize*(blockNr-1);
 	endRowNr = ( blockNr == nrBlocks) ? height - mask_width/2 : blockSize*blockNr;
-	//printf("%d %d %d\n",blockNr,startRowNr,endRowNr);
 	
 	for (int row = startRowNr; row < endRowNr; row ++){
 		for (int col= mask_width/2; col < width - mask_width/2; col++){
@@ -125,8 +118,6 @@ int main (int argc, char *argv[]){
 			*(outpic+pos) = (unsigned char) sumout[0];
 			*(outpic+pos+1) = (unsigned char) sumout[1];
 			*(outpic+pos+2) = (unsigned char) sumout[2];
-			//printf("%d %d %d %d %d %d\n",(int)pic[pos],(int)pic[pos+1],(int)pic[pos+2],
-			//(int)outpic[pos],(int)outpic[pos+1],(int)outpic[pos+2]);
 		}
 	}
 	outpic += blockSize*(blockNr-1)*3*width;
