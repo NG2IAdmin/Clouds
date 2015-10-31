@@ -10,17 +10,10 @@ fi
 IPs=$( cat ipCPUListUpd.txt | awk '{print $1}')
 CPUs=$( cat ipCPUListUpd.txt | awk '{print $2}')
 
-echo $IPs
-echo $CPUs
-
 TotalCPUs=0
 for cpu in $CPUs; do
 	let TotalCPUs+=$cpu
 done
-
-echo $TotalCPUs
-
-exit 1
 
 ssh pi@192.168.1.$1 raspistill -o $2
 scp pi@192.168.1.$1:$2 .
@@ -43,8 +36,10 @@ bin/combinefun $3 $3 $NCPUS
 rm $3_part*
 
 StartingBlockNr=1
-for IP in IPs; do
+i=0
+for IP in $IPs; do
 	./submitlocaljobs.sh $2 $3 $4 $5 $StartingBlockNr $TotalCPUs $IP &
+	let StartingBlockNr+=8
 done
 wait
 bin/combinefun $3 $3 $TotalCPUs
