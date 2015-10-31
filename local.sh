@@ -5,6 +5,6 @@
 NCPUS=$( cat /proc/cpuinfo | grep processor | wc -l )
 for ((i=$1;i<=NCPUS+$1;i++))
 do
-	bin/iojpegparts $3 $4 $5 $6 $i $2 &
+	/home/ng2i/Desktop/Clouds/bin/iojpegparts $3 $4 $5 $6 $i $2 &
 done
 wait
