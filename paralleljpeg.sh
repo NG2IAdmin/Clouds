@@ -7,8 +7,8 @@ if [ "$#" -ne 5 ]; then
 	exit 1
 fi
 
-IPs=$( cat ipCPUList.txt | awk '{print $1}')
-CPUs=$( cat ipCPUList.txt | awk '{print $2}')
+IPs=$( cat ipCPUListUpd.txt | awk '{print $1}')
+CPUs=$( cat ipCPUListUpd.txt | awk '{print $2}')
 
 echo $IPs
 echo $CPUs
@@ -42,6 +42,10 @@ wait
 bin/combinefun $3 $3 $NCPUS 
 rm $3_part*
 
+StartingBlockNr=1
 for IP in IPs; do
-	for cpunr 
+	./submitlocaljobs.sh $2 $3 $4 $5 $StartingBlockNr $TotalCPUs $IP &
 done
+wait
+bin/combinefun $3 $3 $TotalCPUs
+rm $3_part*
