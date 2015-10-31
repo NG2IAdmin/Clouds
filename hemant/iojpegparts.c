@@ -106,7 +106,7 @@ int main (int argc, char *argv[]){
 	int startRowNr, endRowNr;
 	startRowNr = ( blockNr == 1 ) ? mask_width/2 : blockSize*(blockNr-1);
 	endRowNr = ( blockNr == nrBlocks) ? height - mask_width/2 : blockSize*blockNr;
-	printf("%d %d %d\n",blockNr,startRowNr,endRowNr);
+	//printf("%d %d %d\n",blockNr,startRowNr,endRowNr);
 	
 	for (int row = startRowNr; row < endRowNr; row ++){
 		for (int col= mask_width/2; col < width - mask_width/2; col++){
