@@ -26,7 +26,7 @@ bin/combinefun $3 $3 1
 rm $3_part*
 
 NCPUS=$( cat /proc/cpuinfo | grep processor | wc -l )
-echo "Computing locally on " $NCPUS
+echo "Computing locally on " $NCPUS " CPUs."
 for ((i=1;i<=NCPUS;i++))
 do
 	bin/iojpegparts $2 $3 $4 $5 $i $NCPUS &
@@ -34,6 +34,8 @@ done
 wait
 bin/combinefun $3 $3 $NCPUS 
 rm $3_part*
+
+echo "Computing on cloud with " $TotalCPUs " CPUs."
 
 StartingBlockNr=1
 i=0
@@ -44,3 +46,7 @@ done
 wait
 bin/combinefun $3 $3 $TotalCPUs
 # rm $3_part*
+
+echo "Computing using CUDA."
+
+bin/iojpegCUDA $2 $3 $4 $5
