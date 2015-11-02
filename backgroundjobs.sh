@@ -11,7 +11,7 @@ for MACHINE in $MACHINES
 do
 	if [ $MACHINE -eq $OWNIP ]; then continue; fi
 	if [ $MACHINE -eq 1 ]; then continue; fi
-	if [ $MACHINE -eq 7 ]; then continue; fi
+	if [ $MACHINE -eq 4 ]; then continue; fi # For raspberry pi
 	NCPU=$( ssh ng2i@192.168.1.$MACHINE cat /proc/cpuinfo | grep processor | wc -l)
 	echo $MACHINE $NCPU >> ipCPUList.txt
 done

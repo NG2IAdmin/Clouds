@@ -142,7 +142,7 @@ int main (int argc, char *argv[]){
 	cudaMemcpy(cudaMask,mask,mask_width*mask_width*sizeof(double),cudaMemcpyHostToDevice);
 	cudaMemset(cudaOutPic,0,width*height*3*sizeof(unsigned char));
 
-	dim3 block (256);
+	dim3 block (1024);
 	dim3 grid (((width*height)/block.x)+1);
 	printf("%d %d\n",block.x, grid.x);
 	GaussianBlurCuda<<<grid,block>>>(cudaPic, cudaOutPic, cudaMask, sizeCuda);

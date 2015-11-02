@@ -17,5 +17,5 @@ checkbin:
 combinefun: $(ABHISHEKDIR)combinefun.c checkbin
 	$(CC) $(ABHISHEKDIR)combinefun.c -o $(BINDIR)combinefun $(CFLAGS)
 
-cudaexec: $(HEMANTDIR)iojpegparts.cu checkbin
+cudaexec: $(HEMANTDIR)iojpegCUDA.cu checkbin
 	$(NCC) $(HEMANTDIR)iojpegCUDA.cu -o $(BINDIR)iojpegCUDA $(NVCFLAGS)
