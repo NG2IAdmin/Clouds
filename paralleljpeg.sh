@@ -16,9 +16,11 @@ for cpu in $CPUs; do
 	let TotalCPUs+=$cpu
 done
 
+SUBNET=$(ifconfig | grep "inet addr" | grep Bcast | awk '{print $2}' | awk -F"." '{print $3}')
+
 if [ $1 -ne 0 ]; then
-	ssh pi@192.168.1.$1 raspistill -o $2
-	scp pi@192.168.1.$1:$2 .
+	ssh pi@192.168.$SUBNET.$1 raspistill -o $2
+	scp pi@192.168.$SUBNET.$1:$2 .
 fi
 
 echo "Computing locally on 1 cpu"
